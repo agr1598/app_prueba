@@ -4,6 +4,12 @@ import pandas as pd
 # Cargar el archivo Excel
 df = pd.read_excel("df.xlsx")
 
+# 1) Layout wide
+st.set_page_config(
+    page_title="Búsqueda por QName",
+    layout="wide"
+)
+
 # Título
 st.title("Búsqueda por QName")
 
@@ -15,6 +21,6 @@ if search_input:
     # Se filtra el DataFrame usando una búsqueda que no distingue mayúsculas/minúsculas
     filtered_df = df[df["QName"].str.lower() == search_input.lower()]
     st.write("Resultados de la búsqueda:")
-    st.dataframe(filtered_df)
+    st.dataframe(filtered_df, width=1500)
 else:
     st.write("Ingrese un valor en el campo de búsqueda para ver resultados.")
