@@ -13,7 +13,7 @@ search_input = st.text_input("Ingrese el QName a buscar:")
 # Si se ingresa algún texto, se filtran los datos
 if search_input:
     # Se filtra el DataFrame usando una búsqueda que no distingue mayúsculas/minúsculas
-    filtered_df = df[df["QName"].str.contains(search_input, case=False, na=False)]
+    filtered_df = df[df["QName"].str.fullmatch(search_input, case=False, na=False)]
     st.write("Resultados de la búsqueda:")
     st.dataframe(filtered_df)
 else:
