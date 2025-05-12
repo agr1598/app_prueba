@@ -1,26 +1,44 @@
 import streamlit as st
 import pandas as pd
+from st_aggrid import AgGrid, GridOptionsBuilder
 
-# Cargar el archivo Excel
-df = pd.read_excel("df.xlsx")
-
-# 1) Layout wide
+# ─── CONFIGURACIÓN DE PÁGINA ──────────────────────────────────────
 st.set_page_config(
     page_title="Búsqueda por QName",
     layout="wide"
 )
 
-# Título
-st.title("Búsqueda por QName")
+# ─── CARGA DE DATOS ────────────────────────────────────────────────
+df = pd.read_excel("df.xlsx")
 
-# Campo de búsqueda
+# ─── INTERFAZ ─────────────────────────────────────────────────────
+st.title("Búsqueda por QName")
 search_input = st.text_input("Ingrese el QName a buscar:")
 
-# Si se ingresa algún texto, se filtran los datos
 if search_input:
-    # Se filtra el DataFrame usando una búsqueda que no distingue mayúsculas/minúsculas
-    filtered_df = df[df["QName"].str.lower() == search_input.lower()]
+    # Filtrado de coincidencia exacta (sin distinguir mayúsc./minúsc.)
+    filtered_df = df[df["QName"].str.fullmatch(search_input, case=False, na=False)]
+
     st.write("Resultados de la búsqueda:")
-    st.dataframe(filtered_df, width=1500)
+
+    # ─── CONFIGURAR AGGRID ─────────────────────────────────────────
+    gb = GridOptionsBuilder.from_dataframe(filtered_df)
+    gb.configure_default_column(
+        resizable=True,
+        sortable=True,
+        filter=True
+    )
+    # Ajustar todas las columnas al ancho del grid al cargar
+    grid_options = gb.build()
+
+    # Mostrar AgGrid
+    AgGrid(
+        filtered_df,
+        gridOptions=grid_options,
+        fit_columns_on_grid_load=True,
+        height=600,
+        width="100%"
+    )
+
 else:
     st.write("Ingrese un valor en el campo de búsqueda para ver resultados.")
